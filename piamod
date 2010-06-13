@@ -63,15 +63,18 @@ class MolParser:
 	# Muestra el mensaje de bienvenida
 	##
 	def showWelcomeMessage( this ):
-		print "============================================"
-		print "          WELCOME TO MOLPARSER"
+		print "==================================================="
+		print "                 WELCOME TO PIAMOD"
+		print "       System based on Python of Interactive"
+		print "             Analysis of Molecular data"
 		print ""
-		print "        Author: Nestor Aguirre"
-		print "             December 2009"
+		print "               Author: Nestor Aguirre"
+		print "                   December 2009"
 		print ""
-		print " Departamento de Fisica Atomica Molecular"
-		print "          y de Agregados (CSIC)"
-		print "============================================"
+		print "      Departamento de Fisica Atomica Molecular"
+		print "                y de Agregados (CSIC)"
+		print "                    Madrid, Spain"
+		print "==================================================="
 		
 	###
 	# Principal function
