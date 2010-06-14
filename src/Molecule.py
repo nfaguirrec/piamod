@@ -630,6 +630,8 @@ class Molecule(list):
 	##
 	@staticmethod
 	def test():
+		PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+		
 		mol1 = Molecule("Celda unidad de TiO2")
 		
 		mol1.append( Atom(  0.000000000000,   0.000000000000,  4.432457801093, label="O" ) )
@@ -703,7 +705,7 @@ class Molecule(list):
 		print cluster
 		
 		newcluster = Molecule()
-		newcluster.load( "src/data/formats/XYZ", format=Molecule.XYZ )
+		newcluster.load( PIAMOD_HOME+"/src/data/formats/XYZ", format=Molecule.XYZ )
 		print newcluster
 		
 		newcluster.save( format=Molecule.POVRAY )
