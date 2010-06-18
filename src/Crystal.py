@@ -57,6 +57,27 @@ class Crystal(Molecule):
 		return output
 		
 	###
+	#
+	##
+	def __copy__( this ):
+		output = Crystal()
+		
+		output.name = this.name
+		output.symmetryOperators = copy(this.symmetryOperators)
+		output.orbitalEnergies = copy(output.orbitalEnergies)
+		
+		for atom in this:
+			output.append( atom, makeCopy=True, automaticId=False )
+			
+			#if( atom.real ):
+				#this.realAtoms.append( this[-1] )
+				
+		output.latticeVectors = copy(this.latticeVectors)
+		output.numberOfReplicas = copy(this.numberOfReplicas)
+		
+		return output
+		
+	###
 	# Select the latticeVectors
 	##
 	def setLatticeVectors( this, latticeVectors ):

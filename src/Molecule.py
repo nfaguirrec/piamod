@@ -191,13 +191,21 @@ class Molecule(list):
 	# Apply the symmetry operators on the all atoms
 	##
 	def applySymmetry( this ):
+		print "APPLYING SYMMETRY OPERATORS"
+		print "---------------------------"
+		print ""
+		print this.symmetryOperators
+		print ""
+
 		molecule=this[:]
 		
 		for p in this.symmetryOperators:
 			for atom in molecule:
 				xyz = atom.xyzMatrix()*p.rotation.transpose()+numpy.matrix( p.translation )
 				this.append( Atom( xyz[0,0], xyz[0,1], xyz[0,2], label=atom.label, charge=atom.charge, real=False ) )
-					
+				
+		print "   The applying of the symmetry operators has been successful !!"
+		
 	###
 	# Return the Atom object using its id or position (pos), return
 	# a copy or the reference to the original object using makeCopy flag
@@ -291,7 +299,7 @@ class Molecule(list):
 		
 		if( len(molecule1) != len(molecule2) ):
 			print "### Error ###: in Molecule.geometryDifference()"
-			print "               The two molecules don't have the same number of atoms"
+			print "               The two molecules don't have the same number of atoms ", len(molecule1), "!=", len(molecule2)
 			return
 		
 		for i in range(0,len(molecule1)):
@@ -399,6 +407,16 @@ class Molecule(list):
 	#
 	##
 	def checkSymmetry( this, tol=1e-1, force=False ):
+		print "SYMMETRY CHECKING"
+		print "-----------------"
+		print "   TOLERANCE = ", tol
+		print "   FORCE SYMMETRY = ", force
+		
+		if( len( this.symmetryOperators ) == 0 ):
+			print "   Skipping check, because the molecule have not symmetry operators"
+			return
+			
+		isSymmetric = True
 		for atom in this:
 			for p in this.symmetryOperators:
 				xyz = atom.xyzMatrix()*p.rotation.transpose()+numpy.matrix( p.translation )
@@ -407,15 +425,25 @@ class Molecule(list):
 				for atom2 in this:
 					r = numpy.sqrt( sum( (atom2.xyzArray()-proyectedAtom.xyzArray())**2 ) )
 					
-					if( r < tol and r > 1e-6 ):
-							print "Is possible that this atoms are equivalent:"
-							print "\t"+str(atom2)
-							print "\t"+str(proyectedAtom)
+					if( r < tol and r > Atom.xyzThresholdComparison ):
+							print "   Is possible that this atoms are equivalent:"
+							print "      "+str(atom2)
+							print "      "+str(proyectedAtom)
+							
+							isSymmetric = False
 							
 							if( force ):
-								print "\tForced to satisfy the symmetry !!!"
+								print "      Forced to satisfy the symmetry !!!"
 								atom2.set( x=proyectedAtom.x, y=proyectedAtom.y, z=proyectedAtom.z )
 								
+		if( force ):
+			print "   The molecule now is according with the symmetry operators"
+		else:
+			if( isSymmetric ):
+				print "   The molecule is according with the symmetry operators"
+			else:
+				print "   The molecule is not according with the symmetry operators"
+		
 	###
 	#
 	##
@@ -605,6 +633,9 @@ class Molecule(list):
 	# Save the molecule geometry in molden format file
 	##
 	def __loadFromXYZFormat( this, inputFileName ):
+		print "LOADING MOLECULE FROM XYZ FILE"
+		print "------------------------------"
+		print "   INPUTFILENAME = ", inputFileName
 		
 		del this[:]
 		
@@ -624,6 +655,8 @@ class Molecule(list):
 			
 		if( inputFileName!=Molecule.STDIN ):
 			ifile.close()
+			
+		print "   Loading processes sucesfull !!"
 		
 	###
 	# Test method
