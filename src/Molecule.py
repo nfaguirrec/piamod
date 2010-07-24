@@ -23,6 +23,7 @@ import fileinput
 import re
 import math
 import sys
+import os
 
 from copy import *
 from collections import deque
@@ -49,7 +50,7 @@ class Molecule(list):
 	##
 	def __init__( this, name="Unknown", atomicNumbers=None, labels=None, xPos=None, yPos=None, zPos=None, charges=None ):
 		this.name = name
-		this.symmetryOperators = []
+		this.symmetryOperators = SymmetryOperatorsList()
 		this.orbitalEnergies = []
 		this.realAtoms = []
 		
@@ -81,8 +82,9 @@ class Molecule(list):
 			output += "\n\n"
 			output += "Symmetry Operators = \n"
 				
-			for sym in this.symmetryOperators:
-				output +=  str(sym) + "\n"
+			#for sym in this.symmetryOperators:
+			#	output +=  str(sym) + "\n"
+			output += str(this.symmetryOperators)
 		
 		return output
 		
@@ -171,7 +173,7 @@ class Molecule(list):
 	##
 	def setSymetryOperators( this, symmetryOperators, apply=True ):
 		
-		this.symmetryOperators = []
+		this.symmetryOperators = SymmetryOperatorsList()
 		
 		for operator in symmetryOperators:
 			if( operator.__class__.__name__ == "SymmetryOperator" ):
