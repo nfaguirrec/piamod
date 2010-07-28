@@ -10,9 +10,6 @@ PIAMOD_HOME = os.getenv("PIAMOD_HOME")
 if( PIAMOD_HOME == None ):
 	print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
 	quit()
-else:
-	print "PIAMOD_HOME=", PIAMOD_HOME
-
 sys.path.append(PIAMOD_HOME+"/src")
 
 from TextBlock import *
