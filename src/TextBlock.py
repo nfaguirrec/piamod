@@ -133,8 +133,7 @@ class TextBlock:
 		nRows = len(lines)
 		
 		# Se busca el numero maximo de columnas
-		for i in range(0,nRows):
-			line = lines[i]
+		for line in lines:
 			tokens = line.split()
 			
 			if( len(tokens) > maxCols ):
@@ -178,7 +177,7 @@ class TextBlock:
 	##
 	def removeColumns( this, listPos ):
 		tokens = this.content.splitlines()[0].split()
-		toKeep = list( set(range(1,len(tokens)+1))-set(listPos) )
+		toKeep = list( sorted( set(range(1,len(tokens)+1))-set(listPos) ) )
 		this.content = this.getColumns( toKeep )
 	
 	###
