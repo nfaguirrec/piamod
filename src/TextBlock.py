@@ -187,6 +187,34 @@ class TextBlock:
 		print "## Error ##: Funcion sin implementar"
 		
 	###
+	# Une los dos bloques
+	##
+	def append( block1, block2 ):
+		output = TextBlock()
+		output.header = "from append"
+		output.content = ""
+		output.footer = ""
+		
+		lines1 = block1.content.splitlines()
+		lines2 = block2.content.splitlines()
+		
+		equalLines = min( len(lines1), len(lines2) )
+		
+		for i in range( equalLines ):
+			output.content += lines1[i] + " " + lines2[i] + "\n"
+			
+		if( len(lines1) > len(lines2) ):
+			for i in range( equalLines, len(lines1) ):
+				output.content += lines1[i] + "\n"
+		else:
+			for i in range( equalLines, len(lines2) ):
+				output.content += lines2[i] + "\n"
+				
+		output.content = output.content[:-1]
+		output.__updateShape()
+		return output
+		
+	###
 	# Convierte todos los valores a una matrix
 	##
 	@staticmethod
