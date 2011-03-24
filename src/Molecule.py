@@ -47,12 +47,12 @@ class Molecule(list):
 	
 	###
 	# Constructor
+	# @todo Hay que crean una clase hija llamada QuantumMolecule, la cual tendrá parámetros como energías o orbitalEnergies
 	##
 	def __init__( this, name="Unknown", atomicNumbers=None, labels=None, xPos=None, yPos=None, zPos=None, charges=None ):
 		this.name = name
 		this.symmetryOperators = SymmetryOperatorsList()
 		this.orbitalEnergies = []
-		this.realAtoms = []
 		
 		if( ( atomicNumbers!=None or labels!=None ) and ( xPos!=None and yPos!=None and zPos!=None ) and charges!=None ):
 			for i in range(0,len(xPos)):
@@ -60,6 +60,24 @@ class Molecule(list):
 					this.append( Atom(xPos[i], yPos[i], zPos[i], atomicNumber=atomicNumbers[i], charge=charges[i]) )
 				elif( labels!=None ):
 					this.append( Atom(xPos[i], yPos[i], zPos[i], label=labels[i], charge=charges[i]) )
+					
+		this.nSymGrp = 0
+		
+	###
+	# Constructor
+	##
+	@staticmethod
+	def fromListOfAtoms( listOfAtoms ):
+		mol = Molecule()
+		
+		mol.name = "From list of atoms"
+		mol.symmetryOperators = SymmetryOperatorsList()
+		mol.orbitalEnergies = []
+		
+		for atom in listOfAtoms:
+			mol.append( atom )
+			
+		return mol
 		
 	###
 	#
@@ -68,11 +86,13 @@ class Molecule(list):
 		output = "Name = " + this.name +"\n"
 		output += "Atoms List =\n"
 		output += "%5s" % "id"
+		output += "%3s" % "IR"
+		output += "%3s" % "SG"
 		output += "%12s" % "label( Z)"
 		output += "%15s" % "X"
 		output += "%15s" % "Y"
 		output += "%15s" % "Z"
-		#output += "%15s" % "q"
+		output += "%15s" % "Q"
 		#output += "%15s" % "color"
 		
 		for atom in this:
@@ -81,9 +101,6 @@ class Molecule(list):
 		if( len(this.symmetryOperators) > 0 ):
 			output += "\n\n"
 			output += "Symmetry Operators = \n"
-				
-			#for sym in this.symmetryOperators:
-			#	output +=  str(sym) + "\n"
 			output += str(this.symmetryOperators)
 		
 		return output
@@ -101,9 +118,6 @@ class Molecule(list):
 		for atom in this:
 			output.append( atom, makeCopy=True, automaticId=False )
 			
-			#if( atom.real ):
-				#this.realAtoms.append( this[-1] )
-				
 		return output
 			
 	###
@@ -131,10 +145,7 @@ class Molecule(list):
 			
 			if( automaticId ):
 				this[-1].id = len(this)
-				
-			if( item.real ):
-				this.realAtoms.append( this[-1] )
-				
+								
 	###
 	# Removes atoms from the molecule
 	##
@@ -142,7 +153,6 @@ class Molecule(list):
 		if( idList ):
 			for id2 in idList:
 				atom = this.getAtom( id=id2, makeCopy=False )
-				#this.realAtoms.remove( atom )
 				list.remove( this, atom )
 				
 		elif( posList ):
@@ -151,7 +161,6 @@ class Molecule(list):
 				atomList.append( this.getAtom( pos=pos, makeCopy=False ) )
 				
 			for atom in atomList:
-				#this.realAtoms.remove( atom )
 				list.remove( this, atom )
 		
 	###
@@ -323,7 +332,10 @@ class Molecule(list):
 			output[i] = [ xDiff, yDiff, zDiff ]
 				
 		return output
-		
+	
+	###
+	# 
+	##
 	def getNeighborhood( this, atom=None, id=None, makeCopy=False, keepIds=False ):
 		neighborhood = Molecule()
 		
@@ -343,7 +355,10 @@ class Molecule(list):
 					neighborhood.append( atom1, makeCopy=makeCopy, automaticId=(not keepIds) )
 				
 		return neighborhood
-		
+
+	###
+	# @return chemicalFormula:string
+	##
 	def chemicalFormula( this ):
 		counter = {}
 		output = ""
@@ -359,6 +374,9 @@ class Molecule(list):
 			
 		return output
 		
+	###
+	# 
+	##
 	def centerAroundOf( this, atom=None, id=None, active=[True,True,True] ):
 		if( id != None ):
 			atom = this.getAtom( id=id )
@@ -407,6 +425,7 @@ class Molecule(list):
 			
 	###
 	#
+	# @todo Hay que hacer una clase global que almacene todas las tolerancias, i.e. Atom.xyzThresholdComparison que no debería de estar en Atom
 	##
 	def checkSymmetry( this, tol=1e-1, force=False ):
 		print "SYMMETRY CHECKING"
@@ -445,7 +464,63 @@ class Molecule(list):
 				print "   The molecule is according with the symmetry operators"
 			else:
 				print "   The molecule is not according with the symmetry operators"
+
+	###
+	# Find atoms related by symmetry operations. It changes the attribute symGrp in the Atom Class
+	# @todo Cambiar el atributo de la clase atom "real" por "isReal"
+	##
+	def findRelatedBySym( this, tol=1e-1 ):
+		print "FIND ATOMS RELATED BY SYMMETRY"
+		print "------------------------------"
+		print "   TOLERANCE = ", tol
 		
+		if( len( this.symmetryOperators ) == 0 ):
+			print "   ## ERROR ##: The molecule have not symmetry operators"
+			return
+			
+		print ""
+			
+		symGrp = 0
+		for atom in this:
+			if( atom.real ):
+				atom.symGrp = symGrp
+				print "   ", atom.id, "--> [",
+				
+				for p in this.symmetryOperators:
+					xyz = atom.xyzMatrix()*p.rotation.transpose()+numpy.matrix( p.translation )
+					proyectedAtom = Atom( xyz[0,0], xyz[0,1], xyz[0,2], label=atom.label, charge=atom.charge, id=atom.id )
+					
+					for atom2 in this:
+						r = numpy.sqrt( sum( (atom2.xyzArray()-proyectedAtom.xyzArray())**2 ) )
+						
+						if( r < tol ):
+							atom2.symGrp = symGrp
+							print atom2.id,
+							
+				print "]"
+				symGrp += 1
+				
+		this.nSymGrp = symGrp
+	
+	###
+	# Returns the list number "symGrp" with the atoms related by symmetry
+	##
+	def getSymRelatedGroup( this, symGrp=0 ):
+		output = []
+		
+		for atom in this:
+			if( atom.symGrp == symGrp ):
+				output.append( atom )
+		
+		return output
+		
+	###
+	# 
+	##
+	def showSymGroup( this, symGrp=0 ):
+		for atom in this.getSymRelatedGroup( symGrp ):
+			print atom
+								
 	###
 	#
 	##

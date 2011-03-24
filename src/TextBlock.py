@@ -44,6 +44,9 @@ class TextBlock:
 		
 		return output
 		
+	def __len__( this ):
+		return len(this.content)
+		
 	###
 	# Calcula el numero de filas y columnas del contenido del bloque
 	# tomando como número de columnas el valor máximo encontrado

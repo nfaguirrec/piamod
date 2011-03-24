@@ -126,6 +126,9 @@ class ParserTextBlock:
 		selectedHeader = ""
 		footer = ""
 		
+		if( len(text) == 0 ):
+			return ( TextBlock(), -1 )
+			
 		lines = text.splitlines()
 		
 		nBlock=0

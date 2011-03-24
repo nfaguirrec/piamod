@@ -92,7 +92,7 @@ class Atom:
 	###
 	#  @brief Constructor
 	##
-	def __init__( this, x=0.0, y=0.0, z=0.0, charge=0.0, label="X", atomicNumber=0, id=-1, real=True ):
+	def __init__( this, x=0.0, y=0.0, z=0.0, charge=0.0, label="X", atomicNumber=0, id=-1, real=True, symGrp=0 ):
 		
 		this.__blockAttributeAccess = True
 		
@@ -105,6 +105,7 @@ class Atom:
 		
 		this.charge = charge
 		this.id = id
+		this.symGrp = symGrp
 		
 		this.real = real
 		
@@ -128,18 +129,20 @@ class Atom:
 		if( this.id != -1 ):
 			output += "%5s" % str(this.id)
 			
+		if( this.real ):
+			output += "%3s" % "T"
+		else:
+			output += "%3s" % " "
+			
+		output += "%3d" % this.symGrp
+			
 		output += "%8s" % this.label
 		output += "(%2s)" % str(this.atomicNumber)
 		output += "%15.7f" % this.x
 		output += "%15.7f" % this.y
 		output += "%15.7f" % this.z
 		
-		if( this.real ):
-			output += "%3s" % "T"
-		else:
-			output += "%3s" % " "
-			
-		#output += "%15.7f" % this.charge
+		output += "%15.5f" % this.charge
 		#output += "%15s" % this.labelToColor( this.label )
 		
 		return output

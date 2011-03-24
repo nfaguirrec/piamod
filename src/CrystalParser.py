@@ -104,8 +104,10 @@ class CrystalParser( ParserTextBlock ):
 		yPosition = TextBlock.toArray( this.getBlock().getColumn( 6 ), dtype='f' )
 		zPosition = TextBlock.toArray( this.getBlock().getColumn( 7 ), dtype='f' )
 		
-		this.extractBlock( "^\sTOTAL ATOMIC CHARGES:$", "^\s[T]{29,29}.*" )
-		charges = TextBlock.toArray( this.getBlock() )
+		if( len(this.extractBlock( "^\sTOTAL ATOMIC CHARGES:$", "^\s[T]{29,29}.*" )) != 0 ):
+			charges = TextBlock.toArray( this.getBlock() )
+		else:
+			charges = []
 		
 		for n in range(0,len(labels)):
 			
@@ -121,7 +123,7 @@ class CrystalParser( ParserTextBlock ):
 						z = zPosition[n]
 					
 					if( len(charges) == len(labels) ):
-						q = charges[n]
+						q = Atom.labelToAtomicNumber(lab)-charges[n]
 					else:
 						q = 0.0
 						
@@ -139,7 +141,7 @@ class CrystalParser( ParserTextBlock ):
 					z = zPosition[n]
 				
 				if( len(charges) == len(labels) ):
-					q = charges[n]
+					q = Atom.labelToAtomicNumber(lab)-charges[n]
 				else:
 					q = 0.0
 					

@@ -103,8 +103,10 @@ class Crystal(Molecule):
 							atom.x+ix*c[0,0]+iy*c[0,1]+iz*c[0,2],
 							atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2],
 							atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2],
+							charge=atom.charge,
 							label=atom.label,
-							real=atom.real
+							real=False,
+							symGrp=atom.symGrp
 							)
 						)
 		
