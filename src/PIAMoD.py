@@ -24,15 +24,6 @@ import sys
 import atexit
 #from optparse import OptionParser
 
-PIAMOD_HOME = os.getenv("PIAMOD_HOME")
-if( PIAMOD_HOME == None ):
-	print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
-	quit()
-else:
-	print "PIAMOD_HOME=", PIAMOD_HOME
-
-sys.path.append(PIAMOD_HOME+"/src")
-
 from TextBlock import *
 from ParserTextBlock import *
 from CrystalParser import *
@@ -42,20 +33,17 @@ from Molecule import *
 from Crystal import *
 from SymmetryOperator import *
 
-class MolParser:
+class PIAMoD:
 	
 	HISTORY_FILE = os.path.expanduser("~/.piamod_history")
 	
-	def __init__( this ):
-		
-		
 	###
 	# Actualiza el archivo history
 	##
 	def saveHistory( this ):
 		try:
 			import readline
-			readline.write_history_file( MolParser.HISTORY_FILE )
+			readline.write_history_file( PIAMoD.HISTORY_FILE )
 		except ImportError:
 			print "Module readline not available."
 			
@@ -67,8 +55,8 @@ class MolParser:
 	def readHistory( this ):
 		try:
 			import readline
-			if( os.path.exists( MolParser.HISTORY_FILE ) ):
-				readline.read_history_file( MolParser.HISTORY_FILE )
+			if( os.path.exists( PIAMoD.HISTORY_FILE ) ):
+				readline.read_history_file( PIAMoD.HISTORY_FILE )
 		except ImportError:
 			print "Module readline not available."
 			
@@ -108,7 +96,7 @@ class MolParser:
 	# Principal function
 	##
 	@staticmethod
-	def main():
+	def run():
 		#parser = OptionParser()
 		
 		#parser.add_option(
@@ -127,7 +115,7 @@ class MolParser:
 		
 		sys.ps1="piamod> "
 		
-		principal = MolParser()
+		principal = PIAMoD()
 		principal.showWelcomeMessage()
 		principal.loadCompleter()
 		principal.readHistory()

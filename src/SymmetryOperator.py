@@ -19,6 +19,7 @@
 #    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ############################################################################
 
+import os
 import numpy
 
 ###
@@ -129,7 +130,12 @@ class SymmetryOperatorsList( UserList ):
 	def loadFromDB( this, code=1 ):
 		del this[:]
 		
-		ifile = file( "src/data/symDB/" + str(code)+".sym" , 'r')
+		PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+		if( PIAMOD_HOME == None ):
+			print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
+			quit()
+		
+		ifile = file( PIAMOD_HOME+"/src/data/symDB/" + str(code)+".sym" , 'r')
 		fileContent = ifile.read()
 		ifile.close()
 		

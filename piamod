@@ -1,129 +1,16 @@
 #!/usr/bin/python -i
 # -*- coding: utf-8 -*-
 
-import os
 import sys
-import atexit
-#from optparse import OptionParser
+import os
 
 PIAMOD_HOME = os.getenv("PIAMOD_HOME")
 if( PIAMOD_HOME == None ):
 	print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
 	quit()
+
 sys.path.append(PIAMOD_HOME+"/src")
 
-from TextBlock import *
-from ParserTextBlock import *
-from CrystalParser import *
-from MolproParser import *
-from Atom import *
-from Molecule import *
-from Crystal import *
-from SymmetryOperator import *
+from PIAMoD import *
+PIAMoD.run()
 
-class MolParser:
-	
-	HISTORY_FILE = os.path.expanduser("~/.piamod_history")
-	
-	###
-	# Actualiza el archivo history
-	##
-	def saveHistory( this ):
-		try:
-			import readline
-			readline.write_history_file( MolParser.HISTORY_FILE )
-		except ImportError:
-			print "Module readline not available."
-			
-		del readline
-		
-	###
-	# Lee el archivo history
-	##
-	def readHistory( this ):
-		try:
-			import readline
-			if( os.path.exists( MolParser.HISTORY_FILE ) ):
-				readline.read_history_file( MolParser.HISTORY_FILE )
-		except ImportError:
-			print "Module readline not available."
-			
-		del readline
-		
-	###
-	# Carga el componente de completado de codigo
-	##
-	def loadCompleter( this ):
-		try:
-			import readline
-			import rlcompleter
-			readline.parse_and_bind("tab: complete")
-		except ImportError:
-			print "Module rlcompleter not available."
-			
-		del readline, rlcompleter
-		
-	###
-	# Muestra el mensaje de bienvenida
-	##
-	def showWelcomeMessage( this ):
-		print "==================================================="
-		print "                 WELCOME TO PIAMOD"
-		print "       System based on Python of Interactive"
-		print "             Analysis of Molecular data"
-		print ""
-		print "               Author: Nestor Aguirre"
-		print "                   December 2009"
-		print ""
-		print "      Departamento de Fisica Atomica Molecular"
-		print "                y de Agregados (CSIC)"
-		print "                    Madrid, Spain"
-		print "==================================================="
-		
-	###
-	# Principal function
-	##
-	@staticmethod
-	def main():
-		#parser = OptionParser()
-		
-		#parser.add_option(
-			#"-i", "--ifile",
-			#action="store", type="string", dest="inputFileName",
-			#help="Crystal input filename", metavar="FILE"
-		#)
-		
-		#parser.add_option(
-			#"-o", "--ofile",
-			#action="store", type="string", dest="outputFile", default="screen",
-			#help="Write output data to FILE", metavar="FILE"
-		#)
-		
-		#(options, args) = parser.parse_args()
-		
-		sys.ps1="piamod> "
-		
-		principal = MolParser()
-		principal.showWelcomeMessage()
-		principal.loadCompleter()
-		principal.readHistory()
-		atexit.register( principal.saveHistory )
-		
-		if( len( sys.argv ) > 1 ):
-			ifile=sys.argv[1]
-			if os.path.isfile( ifile ):
-				execfile( ifile )
-		
-		#Atom.test()
-		#SymmetryOperator.test()
-		#SymmetryOperatorsList.test()
-		#Molecule.test()
-		#Crystal.test()
-		#TextBlock.test()
-		#ParserTextBlock.test()
-		#CrystalParser.test()
-		#MolproParser.test()
-		
-if __name__ == "__main__":
-	MolParser.main()
-	
