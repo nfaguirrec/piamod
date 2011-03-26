@@ -114,6 +114,7 @@ class Molecule(list):
 		output.name = this.name
 		output.symmetryOperators = copy(this.symmetryOperators)
 		output.orbitalEnergies = copy(output.orbitalEnergies)
+		output.nSymGrp = this.nSymGrp
 		
 		for atom in this:
 			output.append( atom, makeCopy=True, automaticId=False )
@@ -145,7 +146,28 @@ class Molecule(list):
 			
 			if( automaticId ):
 				this[-1].id = len(this)
-								
+		
+	###
+	# Sets the charge of a type of atom
+	##
+	def setCharges( this, charge, label=None, id=None, pos=None ):
+		if( label != None ):
+			for atom in this:
+				if( atom.label == label ):
+					atom.charge = charge
+		elif( id != None ):
+			for atom in this:
+				if( atom.id == id ):
+					atom.charge = charge
+		elif( pos != None ):
+			for i in range(len(this)):
+				if( i == pos ):
+					this(i).charge = charge
+		else:
+			for i in range(1,len(this)+1):
+				if( i == pos ):
+					this(i).charge = charge
+	
 	###
 	# Removes atoms from the molecule
 	##

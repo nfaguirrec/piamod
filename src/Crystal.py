@@ -39,7 +39,7 @@ class Crystal(Molecule):
 	#
 	##
 	def __str__( this ):
-		output = Molecule.__str__( this )+"\n"
+		output = Molecule.__str__( this )+"\n\n"
 		output += "Lattice Vectors ="
 		
 		for i in [0,1,2]:

@@ -121,6 +121,23 @@ class Atom:
 			this.__blockAttributeAccess = False
 		
 	###
+	#  @brief Copy constructor
+	##
+	#def __copy__( this ):
+		#other = Atom()
+		#this.x = other.x
+		#this.y = other.y
+		#this.z = other.z
+		#this.label = other.label
+		#this.atomicNumber = other.atomicNumber
+		#this.charge = other.charge
+		#this.id = other.id
+		#this.symGrp = other.symGrp
+		#this.real = other.real
+		#this.atomicNumber = other.atomicNumber
+		#return other
+			
+	###
 	#
 	##
 	def __str__( this ):
