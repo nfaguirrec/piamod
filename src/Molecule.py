@@ -146,7 +146,7 @@ class Molecule(list):
 			
 			if( automaticId ):
 				this[-1].id = len(this)
-		
+								
 	###
 	# Sets the charge of a type of atom
 	##
@@ -238,6 +238,7 @@ class Molecule(list):
 				this.append( Atom( xyz[0,0], xyz[0,1], xyz[0,2], label=atom.label, charge=atom.charge, real=False ) )
 				
 		print "   The applying of the symmetry operators has been successful !!"
+		print ""
 		
 	###
 	# Return the Atom object using its id or position (pos), return
@@ -267,9 +268,18 @@ class Molecule(list):
 	###
 	# Return the diference between this molecule respect to other. Remember
 	# that two atoms are equal only if them have the exact same xyz coordinates
+	# @todo Esta diferencia no debería retornar otra molecula, debería modificar la actual molecula
 	##
 	def difference( this, other, makeCopy=True, keepIds=False, tol=Atom.xyzThresholdComparison ):
+		print "BUILDING THE MOLECULE DIFFERENCE"
+		print "--------------------------------"
+		print ""
+		print "\""+this.name+"\""+" .DIFFERENCE. "+"\""+ other.name+"\""
+		print ""
+
 		outputMolecule = Molecule()
+		
+		outputMolecule.nSymGrp = this.nSymGrp
 		
 		initialTol = Atom.xyzThresholdComparison
 		Atom.xyzThresholdComparison = tol
@@ -287,7 +297,8 @@ class Molecule(list):
 				outputMolecule.append( this[n], makeCopy=makeCopy, automaticId=(not keepIds) )
 				
 		Atom.xyzThresholdComparison = initialTol
-				
+
+		print ""
 		return outputMolecule
 		
 	###
@@ -302,11 +313,11 @@ class Molecule(list):
 		initialTol = Atom.xyzThresholdComparison
 		Atom.xyzThresholdComparison = tol
 		
-		for n in range(0,len(this)):
+		for n in range(len(this)):
 			
 			located = False
 			
-			for m in range(0,len(other)):
+			for m in range(len(other)):
 				if( this[n] == other[m] ):
 					located = True
 					break
@@ -501,12 +512,12 @@ class Molecule(list):
 			return
 			
 		print ""
-			
+		
 		symGrp = 0
 		for atom in this:
 			if( atom.real ):
 				atom.symGrp = symGrp
-				print "   ", atom.id, "--> [",
+				print "   ", "%5d"%atom.id, "--> [",
 				
 				for p in this.symmetryOperators:
 					xyz = atom.xyzMatrix()*p.rotation.transpose()+numpy.matrix( p.translation )
@@ -523,25 +534,28 @@ class Molecule(list):
 				symGrp += 1
 				
 		this.nSymGrp = symGrp
+		print ""
 	
 	###
 	# Returns the list number "symGrp" with the atoms related by symmetry
 	##
-	def getSymRelatedGroup( this, symGrp=0 ):
-		output = []
+	def getSymRelatedGroups( this ):
+		output = {}
+		
+		for i in range(this.nSymGrp):
+			output[i]=[]
 		
 		for atom in this:
-			if( atom.symGrp == symGrp ):
-				output.append( atom )
+			output[atom.symGrp].append( atom )
 		
 		return output
 		
 	###
 	# 
 	##
-	def showSymGroup( this, symGrp=0 ):
-		for atom in this.getSymRelatedGroup( symGrp ):
-			print atom
+	#def showSymGroup( this, symGrp=0 ):
+		#for atom in this.getSymRelatedGroup( symGrp ):
+			#print atom
 								
 	###
 	#
@@ -747,6 +761,8 @@ class Molecule(list):
 		for line in ifile:
 			if( i==1 ):
 				this.name = line[0:len(line)-1]
+				if( len(this.name) == 0 ):
+					this.name = "from "+inputFileName
 			if( i>=2 ):
 				tokens = line.split()
 				this.append( Atom( float(tokens[1]), float(tokens[2]), float(tokens[3]), label=tokens[0] ) )
@@ -756,6 +772,7 @@ class Molecule(list):
 			ifile.close()
 			
 		print "   Loading processes sucesfull !!"
+		print ""
 		
 	###
 	# Test method
