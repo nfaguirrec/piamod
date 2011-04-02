@@ -87,6 +87,11 @@ class Crystal(Molecule):
 	# Select the supercell dimentions
 	##
 	def buildSuperCell( this, nx=1, ny=1, nz=1 ):
+		print "BUILDING SUPERCELL"
+		print "------------------"
+		print "   NEW SIZE: "+"[ "+str(nx)+", "+str(ny)+", "+str(nz)+" ]"
+		print ""
+
 		this.numberOfReplicas[0] = nx
 		this.numberOfReplicas[1] = ny
 		this.numberOfReplicas[2] = nz
@@ -99,17 +104,12 @@ class Crystal(Molecule):
 				for iz in range(nz/2-nz+1, nz/2+1):
 					
 					for atom in molecule:
-						this.append( Atom(
-							atom.x+ix*c[0,0]+iy*c[0,1]+iz*c[0,2],
-							atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2],
-							atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2],
-							charge=atom.charge,
-							label=atom.label,
-							real=False,
-							symGrp=atom.symGrp
-							)
-						)
-		
+						x = atom.x+ix*c[0,0]+iy*c[0,1]+iz*c[0,2]
+						y = atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2]
+						z = atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2]
+						
+						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ) )
+								
 	###
 	# Test method
 	##

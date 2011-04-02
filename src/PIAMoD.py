@@ -31,6 +31,7 @@ from MolproParser import *
 from Atom import *
 from Molecule import *
 from Crystal import *
+from QuantumMolecule import *
 from SymmetryOperator import *
 
 class PIAMoD:
