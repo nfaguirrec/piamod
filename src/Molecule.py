@@ -85,6 +85,7 @@ class Molecule(list):
 	def __str__( this ):
 		output = "Name = " + this.name +"\n"
 		output += "Atoms List =\n"
+		output += "%5s" % "p"
 		output += "%5s" % "id"
 		output += "%3s" % "IR"
 		output += "%3s" % "SG"
@@ -370,6 +371,7 @@ class Molecule(list):
 	# 
 	##
 	def getNeighborhood( this, atom=None, id=None, makeCopy=False, keepIds=False ):
+		print "   Getting neighborhood for atom id=", "%5d"%id, " ... ",
 		neighborhood = Molecule()
 		
 		if( atom != None ):
@@ -387,6 +389,12 @@ class Molecule(list):
 				if( centerAtom.isConnectedWith( atom1 ) ):
 					neighborhood.append( atom1, makeCopy=makeCopy, automaticId=(not keepIds) )
 				
+		print "OK --> [", 
+		
+		for atom in neighborhood:
+			print atom.id,
+		print "]",
+			
 		return neighborhood
 
 	###
@@ -580,9 +588,21 @@ class Molecule(list):
 	#
 	##
 	def neighborhoodCluster( this, idCenter=None, length=1, makeCopy=False, saturate=False, idCenterList=None, keepIds=False ):
+		print "BUILDING NEIGHBORHOOD CLUSTER"
+		print "------------------------------"
+		if( idCenter != None ):
+			print "   center   = ", idCenter
+		elif( idCenterList != None ):
+			print "   center   = ", idCenterList
+		print "   length   = ", length
+		print "   makeCopy = ", makeCopy
+		print "   saturate = ", saturate
+		print "   keepIds  = ", keepIds
+		
 		outputMolecule = Molecule()
 		prevCenterList = []
 		newCenterList = []
+		processed = {}
 			
 		if( idCenterList != None ):
 			for idItem in idCenterList:
@@ -598,15 +618,18 @@ class Molecule(list):
 		if( length != 0 ):
 			for i in range(1,length+1):
 				for center in prevCenterList:
-					neighborhood = this.getNeighborhood( id=center.id, keepIds=True )
-					
-					for newAtom in neighborhood:
+					if( not processed.has_key(center.id) ):
+						processed[center.id] = True
+						neighborhood = this.getNeighborhood( id=center.id, keepIds=True )
+						print "%5d"%(100*len(processed)/len(this)),"%"
 						
-						newCenterList.append( newAtom )
-						outputMolecule.append( newAtom, makeCopy=makeCopy, automaticId=False )
-					
-					
+						for newAtom in neighborhood:
+							if( not processed.has_key(newAtom.id) ):
+								newCenterList.append( newAtom )
+								outputMolecule.append( newAtom, makeCopy=makeCopy, automaticId=False )
+						
 				prevCenterList = newCenterList[:]
+				newCenterList = []
 				
 		if( saturate ):
 			clusterExtended = this.__saturateWith( outputMolecule, "H" )
