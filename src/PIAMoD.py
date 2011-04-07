@@ -82,11 +82,10 @@ class PIAMoD:
 	def showWelcomeMessage( this ):
 		print "==================================================="
 		print "                 WELCOME TO PIAMOD"
-		print "       System based on Python of Interactive"
+		print "       System based on Python for Interactive"
 		print "             Analysis of Molecular data"
 		print ""
-		print "               Author: Nestor Aguirre"
-		print "                   December 2009"
+		print "         Author: Nestor Aguirre (2009-2011)"
 		print ""
 		print "      Departamento de Fisica Atomica Molecular"
 		print "                y de Agregados (CSIC)"

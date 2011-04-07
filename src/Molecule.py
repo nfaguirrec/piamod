@@ -96,8 +96,8 @@ class Molecule(list):
 		output += "%15s" % "Q"
 		#output += "%15s" % "color"
 		
-		for atom in this:
-			output += "\n" + str(atom)
+		for i in range(len(this)):
+			output += "\n"+"%5s"%i + str(this[i])
 			
 		if( len(this.symmetryOperators) > 0 ):
 			output += "\n\n"
@@ -291,6 +291,9 @@ class Molecule(list):
 			
 			for m in range(0,len(other)):
 				if( this[n] == other[m] ):
+					print "   Equivalent atom located:"
+					print "      ", this[n]
+					print "      ", other[m]
 					located = True
 					break
 					
@@ -721,7 +724,8 @@ class Molecule(list):
 			print >> ofile, '%-5s' % atom.label,
 			print >> ofile, '%10.5f' % atom.x,
 			print >> ofile, '%10.5f' % atom.y,
-			print >> ofile, '%10.5f' % atom.z
+			print >> ofile, '%10.5f' % atom.z,
+			print >> ofile, '%10.2f' % atom.charge
 			
 		if( outputFileName!=Molecule.STDOUT ):
 			ofile.close()
