@@ -396,7 +396,7 @@ class Molecule(list):
 		
 		for atom in neighborhood:
 			print atom.id,
-		print "]",
+		print "]"
 			
 		return neighborhood
 

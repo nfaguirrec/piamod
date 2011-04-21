@@ -83,10 +83,13 @@ class QuantumMolecule( Molecule ):
 		print >> ofile, "set xlabel \"N\""
 		print >> ofile, "set xtics out nomirror border in scale 0,0"
 		print >> ofile, "set size 0.5,0.8"
-		print >> ofile, "set xrange [0.0:",len(orbEnerList),"]"
+		print >> ofile, "set xrange [-0.2:",len(orbEnerList)+0.2,"]"
 		
+		rangeEner = [0.0]*len(orbEnerList)
 		print >> ofile, "set xtics ( ",
 		for i in range(len(labels)):
+			rangeEner[i] = max(orbEnerList[i])-min(orbEnerList[i])
+			
 			print >> ofile, "\"", labels[i] ,"\" ", 0.5+i,
 			if( i!= len(labels)-1 ):
 				print >> ofile, ", ",
@@ -97,7 +100,7 @@ class QuantumMolecule( Molecule ):
 		for i in range(len(orbEnerList)):
 			for j in range(len(orbEnerList[i])):
 				y=orbEnerList[i][j]-min(orbEnerList[i])
-				print >> ofile, "set arrow from ",i,"+0.2,", y, " to ",i,"+0.8,", y, " as 1"
+				print >> ofile, "set arrow from ",i,"+0.25,", y, " to ",i,"+0.75,", y, " as 1"
 				
 				if( y < emin ):
 					emin = y
@@ -105,8 +108,9 @@ class QuantumMolecule( Molecule ):
 				if( y > emax ):
 					emax = y
 					
-			dens=len(orbEnerList[i])/(max(orbEnerList[i])-min(orbEnerList[i]))
+			dens=len(orbEnerList[i])/rangeEner[i]
 			print >> ofileDens, 0.5+i, dens
+			
 			
 		print >> ofile, "set yrange [",emin-0.1*(emax-emin),":",emax+0.1*(emax-emin),"]"
 		print >> ofile, "plot ",10.0*emax
@@ -116,7 +120,7 @@ class QuantumMolecule( Molecule ):
 		print >> ofile, "unset xlabel"
 		print >> ofile, "set border 0"
 		print >> ofile, "set size 0.39,0.2"
-		print >> ofile, "set origin 0.112,0.76"
+		print >> ofile, "set origin 0.11,0.758"
 		print >> ofile, "unset xtics"
 		print >> ofile, "unset ytics"
 		print >> ofile, "set style fill solid 1.00 border -1"
@@ -143,11 +147,11 @@ class QuantumMolecule( Molecule ):
 		# 1 bosons
 		n1 = [ -16.16, -16.08, -15.21, -15.13, -14.86, -13.54 ]
 		# 2 bosons
-		n2 = [ -32.42, -31.56, -31.11, -32.00, -31.48, -30.66, -32.03, -30.50, -30.26, -31.63, -30.33, -31.55, -30.33 ]
+		n2 = [ -32.42, -31.56, -31.11, -30.50, -32.00, -31.48, -30.66, -32.03, -30.26, -31.63, -30.33, -31.55, -30.33 ]
 		# 3 bosons
-		n3 = [ -48.58, -48.06, -47.69, -46.98, -47.76, -47.68, -47.58, -47.69, -47.13, -46.15, -48.13, -47.75, -46.84, -47.72, -46.39, -47.75, -46.99 ]
+		n3 = [ -48.58, -48.06, -47.69, -46.98, -47.76, -47.68, -47.58, -46.92, -46.32, -47.69, -47.13, -46.15, -48.13, -47.75, -46.84, -47.72, -46.39, -47.75, -46.99 ]
 		# 4 bosons
-		n4 = [ -64.49, -63.57, -62.76, -64.55, -63.73, -63.11 ]
+		n4 = [ -64.49, -64.22, -62.59, -63.57, -63.42, -62.76, -64.55, -62.83, -63.73, -63.13, -63.11 ]
 		
 		QuantumMolecule.orbitalEnergiesToGnuplot( [n1,n2,n3,n4], ["1", "2", "3", "4"], "salida.gnu" )
 		os.system("gnuplot salida.gnu; rm salida.gnu")
