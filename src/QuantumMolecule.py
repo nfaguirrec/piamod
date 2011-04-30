@@ -86,6 +86,7 @@ class QuantumMolecule( Molecule ):
 		print >> ofile, "set xrange [-0.2:",len(orbEnerList)+0.2,"]"
 		
 		rangeEner = [0.0]*len(orbEnerList)
+
 		print >> ofile, "set xtics ( ",
 		for i in range(len(labels)):
 			rangeEner[i] = max(orbEnerList[i])-min(orbEnerList[i])
@@ -93,6 +94,8 @@ class QuantumMolecule( Molecule ):
 			print >> ofile, "\"", labels[i] ,"\" ", 0.5+i,
 			if( i!= len(labels)-1 ):
 				print >> ofile, ", ",
+				
+			eRange[i] = abs( max(orbEnerList[i])-min(orbEnerList[i]) )
 		print >> ofile, ")"
 		
 		emin = 1e10
@@ -154,7 +157,7 @@ class QuantumMolecule( Molecule ):
 		n4 = [ -64.49, -64.22, -62.59, -63.57, -63.42, -62.76, -64.55, -62.83, -63.73, -63.13, -63.11 ]
 		
 		QuantumMolecule.orbitalEnergiesToGnuplot( [n1,n2,n3,n4], ["1", "2", "3", "4"], "salida.gnu" )
-		os.system("gnuplot salida.gnu; rm salida.gnu")
+		os.system("gnuplot salida.gnu")
 
 		print qmol
 		

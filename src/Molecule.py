@@ -132,7 +132,16 @@ class Molecule(list):
 	###
 	# Adds Atoms to the molecule
 	##
-	def append( this, item, makeCopy=True, automaticId=True ):
+	def append( this, item, makeCopy=True, automaticId=True, check=True ):
+		if( not check ):
+			if( makeCopy ):
+				list.append( this, copy( item ) )
+			else:
+				list.append( this, item )
+			
+			if( automaticId ):
+				this[-1].id = len(this)			
+			
 		exist = False
 		for atom in this:
 			if( atom == item ):
@@ -459,9 +468,9 @@ class Molecule(list):
 	###
 	#
 	##
-	def load( this, inputFileName=STDIN, format=XYZ ):
+	def load( this, inputFileName=STDIN, format=XYZ, check=False ):
 		if( format==Molecule.XYZ ):
-			this.__loadFromXYZFormat( inputFileName )
+			this.__loadFromXYZFormat( inputFileName, check )
 		else:
 			print "##Error##: in Molecule.load()"
 			print "           Input file format for load geometry not Supported"
@@ -772,10 +781,11 @@ class Molecule(list):
 	###
 	# Save the molecule geometry in molden format file
 	##
-	def __loadFromXYZFormat( this, inputFileName ):
+	def __loadFromXYZFormat( this, inputFileName, check=False ):
 		print "LOADING MOLECULE FROM XYZ FILE"
 		print "------------------------------"
 		print "   INPUTFILENAME = ", inputFileName
+		print "   CHECK         = ", check
 		
 		del this[:]
 		
@@ -792,7 +802,7 @@ class Molecule(list):
 					this.name = "from "+inputFileName
 			if( i>=2 ):
 				tokens = line.split()
-				this.append( Atom( float(tokens[1]), float(tokens[2]), float(tokens[3]), label=tokens[0] ) )
+				this.append( Atom( float(tokens[1]), float(tokens[2]), float(tokens[3]), label=tokens[0] ), check )
 			i+=1
 			
 		if( inputFileName!=Molecule.STDIN ):

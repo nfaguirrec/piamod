@@ -131,13 +131,13 @@ class ParserTextBlock:
 			
 		lines = text.splitlines()
 		
-		nBlock=0
+		nBlock=1
 		nLine=0
 		for line in lines:
 			
 			if( locatedBegin==True ):
 				
-				if( end == ParserTextBlock.EOF and nLine+1 == len(lines) ):
+				if( end == ParserTextBlock.EOF or nLine+1 == len(lines) ):
 					selectedBlock = selectedBlock+line
 					
 					footer = ""
@@ -162,9 +162,9 @@ class ParserTextBlock:
 						break
 					else:
 						nBlock += 1
-				else:
-					if( re.match( lineFilter, line ) ):
-						selectedBlock = selectedBlock+line+"\n"
+						
+				elif( re.match( lineFilter, line ) ):
+						selectedBlock = selectedBlock+line+"\n"						
 				
 			if( re.match( begin, line ) ):
 				locatedBegin = True

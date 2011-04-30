@@ -116,7 +116,7 @@ class PIAMoD:
 		sys.ps1="piamod> "
 		
 		principal = PIAMoD()
-		principal.showWelcomeMessage()
+		#principal.showWelcomeMessage()
 		principal.loadCompleter()
 		principal.readHistory()
 		atexit.register( principal.saveHistory )

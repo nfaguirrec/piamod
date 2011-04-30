@@ -80,7 +80,7 @@ class BGrep:
 		print "   -nf"
 		print "       Activates the flag to include not the footer"
 		print "   -p  Integer"
-		print "       Extracts a specific block number"
+		print "       Extracts a specific block number p>0"
 		quit()
 		
 	@staticmethod
@@ -108,6 +108,9 @@ class BGrep:
 				includeFooter = False
 			elif( option[0] == "-p" ):
 				position = option[1]
+				if( int(position) < 1 ):
+					print "## ERROR ## The number of block should be greater than zero (-p option)"
+					quit()
 			elif( option[0] == "-r" ):
 				remove = True
 			
