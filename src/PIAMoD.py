@@ -28,6 +28,9 @@ from TextBlock import *
 from ParserTextBlock import *
 from CrystalParser import *
 from MolproParser import *
+from PrimitiveGaussian import *
+from ContractedGaussian import *
+from GaussianBasisSet import *
 from Atom import *
 from Molecule import *
 from Crystal import *
