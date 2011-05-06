@@ -56,7 +56,6 @@ class BasisCry2Mol:
 		
 		gbs = GaussianBasisSet()
 		gbs.loadFromTextBlock( block, format=GaussianBasisSet.CRYSTAL )
-		print gbs
 		print gbs.save( format=GaussianBasisSet.MOLPRO )
 
 if __name__ == "__main__":
