@@ -430,7 +430,7 @@ class Molecule(list):
 	###
 	# 
 	##
-	def centerAroundOf( this, atom=None, id=None, active=[True,True,True] ):
+	def centerAroundOf( this, atom=None, id=None, center=None, active=[True,True,True] ):
 		if( id != None ):
 			atom = this.getAtom( id=id )
 				
@@ -447,6 +447,18 @@ class Molecule(list):
 					y=(atom1.y-atom.y)
 				if( active[2] ):
 					z=(atom1.z-atom.z)
+					
+				atom1.set( x=x, y=y, z=z )
+				
+		if( center != None ):
+			for atom1 in this:
+				
+				if( active[0] ):
+					x=(atom1.x+center[0])
+				if( active[1] ):
+					y=(atom1.y+center[1])
+				if( active[2] ):
+					z=(atom1.z+center[2])
 					
 				atom1.set( x=x, y=y, z=z )
 		
