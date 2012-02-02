@@ -97,7 +97,7 @@ class CrystalParser( ParserTextBlock ):
 		#this.extractBlock( "^\sATOMS IN THE ASYMMETRIC UNIT.*", "^[\s]*$", "^[\s]{2,}[\d]+[\s]T.*", pos )
 		#idsOfRealAtoms = TextBlock.toArray( this.getBlock().getColumn(1), dtype='i' )
 		
-		this.extractBlock( "^\sATOMS IN THE ASYMMETRIC UNIT.*", "^\s*$", "^\s+\d+.*", pos )
+		this.extractBlock( "^\sATOMS IN THE ASYMMETRIC UNIT.*", "^\s*$", "^\s*\d+.*", pos )
 		labels = TextBlock.toArray( this.getBlock().getColumn( 4 ), dtype='a' )
 		isReal = TextBlock.toArray( this.getBlock().getColumn( 2 ), dtype='a' )
 		xPosition = TextBlock.toArray( this.getBlock().getColumn( 5 ), dtype='f' )
