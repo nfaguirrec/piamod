@@ -27,6 +27,7 @@ import atexit
 from TextBlock import *
 from ParserTextBlock import *
 from CrystalParser import *
+from VASP_Parser import *
 from MolproParser import *
 from PrimitiveGaussian import *
 from ContractedGaussian import *

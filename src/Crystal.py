@@ -32,7 +32,7 @@ class Crystal(Molecule):
 	##
 	def __init__( this, name="Unknown", atomicNumbers=None, labels=None, xPos=None, yPos=None, zPos=None, charges=None ):
 		Molecule.__init__( this, name, atomicNumbers, labels, xPos, yPos, zPos, charges )
-		this.latticeVectors = numpy.identity(3)
+		this.latticeVectors = -numpy.ones( (3,3) )
 		this.numberOfReplicas = [1,1,1]
 		
 	###
@@ -81,7 +81,20 @@ class Crystal(Molecule):
 	# Select the latticeVectors
 	##
 	def setLatticeVectors( this, latticeVectors ):
-		this.latticeVectors = numpy.matrix( latticeVectors )
+		
+		# Checks if the lattice vectors have been chosen,
+		# if these values have been chosen then the atomic
+		# positions will be rescaled to the new values
+		if( not ( this.latticeVectors+1.0 ).any() ):
+			this.latticeVectors = numpy.matrix( latticeVectors )
+		else:
+			oldLatticeVectors = numpy.matrix( this.latticeVectors )
+			this.latticeVectors = numpy.matrix( latticeVectors )
+			
+			for atom in this:
+				atom.x = ( this.latticeVectors[0,0]/oldLatticeVectors[0,0] )*atom.x
+				atom.y = ( this.latticeVectors[1,1]/oldLatticeVectors[1,1] )*atom.y
+				atom.z = ( this.latticeVectors[2,2]/oldLatticeVectors[2,2] )*atom.z
 		
 	###
 	# Select the supercell dimentions
@@ -96,7 +109,7 @@ class Crystal(Molecule):
 		this.numberOfReplicas[1] = ny
 		this.numberOfReplicas[2] = nz
 		
-		molecule=this[:]
+		molecule = this[:]
 		c = this.latticeVectors
 		
 		for ix in range(nx/2-nx+1, nx/2+1):
@@ -108,13 +121,15 @@ class Crystal(Molecule):
 						y = atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2]
 						z = atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2]
 						
-						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ) )
+						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True )
 								
 	###
 	# Test method
 	##
 	@staticmethod
 	def test():
+		PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+		
 		crystal = Crystal("Celda unidad de TiO2")
 		
 		crystal.append( Atom( 0.000000000000, 0.000000000000, 0.000000000000, label="Ti" ) )
@@ -203,7 +218,14 @@ class Crystal(Molecule):
 			
 		crystal.setLatticeVectors( latticeVectors )
 		crystal.buildSuperCell( 2, 2, 2 )
-		
 		crystal.save( "final.xyz", format=Molecule.XYZ )
+		
+		latticeVectors = [[ 1.2*4.64, 0.00, 0.00],
+				  [ 0.00, 1.2*4.64, 0.00],
+				  [ 0.00, 0.00, 1.2*2.98]]
+				  
+		crystal.setLatticeVectors( latticeVectors )
+		crystal.save( "final2.xyz", format=Molecule.XYZ )
+		
 		print crystal
 		

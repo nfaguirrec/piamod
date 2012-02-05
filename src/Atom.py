@@ -250,6 +250,12 @@ class Atom:
 	###
 	#
 	##
+	def isInTheSamePositionWith( this, atom ):
+		return Atom.areInTheSamePosition( this, atom )
+		
+	###
+	#
+	##
 	def covalentRadius( this ):
 		return Atom.labelToCovalentRadius( this.label )
 	
@@ -310,6 +316,24 @@ class Atom:
 			return True
 		else:
 			return False
+			
+	###
+	#
+	##
+	@staticmethod
+	def areInTheSamePosition( atom1, atom2 ):
+		
+		label1 = Atom.__filterLabel( atom1.label )
+		label2 = Atom.__filterLabel( atom2.label )
+		
+		diff = atom1.xyzArray() - atom2.xyzArray()
+		dist = math.sqrt( numpy.dot( diff, diff ) )
+		cutoff = min( Atom.labelToCovalentRadius( label1 ), Atom.labelToCovalentRadius( label2 ) )
+		
+		if( dist <  cutoff and dist > 0.001 ):
+			return True
+		else:
+			return False
 		
 	###
 	# Translate from the label of one atom to the respective atomic number
@@ -350,6 +374,7 @@ class Atom:
 		atom2 = Atom( 2.9548764, 6.5030656, 4.432477, label="O1" )
 		atom3 = Atom( 2.9548764, 3.2515328, 1.269827, label="O" )
 		atom4 = Atom( 2.96, 3.26, 3.13, label="Ti" )
+		atom5 = Atom( 2.9, 3.2, 3.1, label="Mg" )
 		
 		print " Atoms"
 		print "======="
@@ -375,5 +400,8 @@ class Atom:
 		
 		print "Covalent Radius for Atom1 = ", atom1.covalentRadius()
 		print "Covalent Radius for Atom3 = ", atom3.covalentRadius()
+		
+		print "Atom1 is in the same position with Atom2 ? = ", atom1.isInTheSamePositionWith( atom2 )
+		print "Atom1 is in the same position with Atom5 ? = ", atom1.isInTheSamePositionWith( atom5 )
 		
 		

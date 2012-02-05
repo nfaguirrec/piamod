@@ -140,22 +140,32 @@ class Molecule(list):
 				list.append( this, item )
 			
 			if( automaticId ):
-				this[-1].id = len(this)			
-			
-		exist = False
-		for atom in this:
-			if( atom == item ):
-				exist = True
-				break
-		
-		if( not exist ):
-			if( makeCopy ):
-				list.append( this, copy( item ) )
-			else:
-				list.append( this, item )
-			
-			if( automaticId ):
 				this[-1].id = len(this)
+		else:
+			exist = False
+			for atom in this:
+				if( atom == item ):
+					#print "This atoms are equal:"
+					#print "  -> ", atom
+					#print "  -> ", item
+					exist = True
+					break
+					
+				if( atom.isInTheSamePositionWith(item) ):
+					#print "This atoms are in the same position:"
+					#print "  -> ", atom
+					#print "  -> ", item
+					exist = True
+					break
+			
+			if( not exist ):
+				if( makeCopy ):
+					list.append( this, copy( item ) )
+				else:
+					list.append( this, item )
+				
+				if( automaticId ):
+					this[-1].id = len(this)
 								
 	###
 	# Sets the charge of a type of atom
