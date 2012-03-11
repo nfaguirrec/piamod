@@ -85,7 +85,7 @@ class CrystalParser( ParserTextBlock ):
 		#print this.extractBlock( "^\s.*STARTING  DATE.*$", "^\s+$" )
 		#latticeParameters = TextBlock.toArray( this.getBlock().getRow(1) )
 		
-		this.extractBlock( "^\sLATTICE PARAMETERS.*", "^\s[*]{20,}$", "^\s+\d+[.]\d+.*", pos )
+		this.extractBlock( "^\sLATTICE PARAMETERS.*BOHR", "^\s[*]{20,}$", "^\s+\d+[.]\d+.*", pos )
 		latticeParameters = TextBlock.toArray( this.getBlock().getRow(1) )
 		
 		# Esto es temporal, hay que ver en que parte se adiciona la infomación

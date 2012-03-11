@@ -679,6 +679,64 @@ class Molecule(list):
 			
 		return outputMolecule
 		
+	#
+	# @brief Calcula la energía de dispersión con esquemas tipo Grimme
+	#
+	def dispCorr( this, scheme="Grimme" ):
+		Edisp = 0.0
+		
+		if( scheme == "Grimme" ):
+			
+			Htocm1 = 219474.63068
+			unit_J_to_H = 2.2937128e17
+			unit_nm_to_a0 = 18.89726134
+			unit_pm_to_a0 = unit_nm_to_a0/1.0e3
+			unit_mol_to_au = 6.0221417930e23
+			unit_Ang_to_a0 = 1.0/0.529177208
+			
+			# C6 values and vdW radii from
+			# S. Grimme, J Comput Chem 27 (2006) 1787-1799
+			# Units c6=[J nm^6 mol^{-1}], r=[Angstrom]
+			c6Table = {}
+			c6Table["H"] = 0.14*unit_J_to_H*unit_nm_to_a0**6/unit_mol_to_au
+			c6Table["He"] = 0.08*unit_J_to_H*unit_nm_to_a0**6/unit_mol_to_au
+			c6Table["O"] = 0.70*unit_J_to_H*unit_nm_to_a0**6/unit_mol_to_au
+			c6Table["Ti"] = 10.80*unit_J_to_H*unit_nm_to_a0**6/unit_mol_to_au
+			
+			rvdWTable = {}
+			rvdWTable["H"] = 1.001*unit_Ang_to_a0
+			rvdWTable["He"] = 1.012*unit_Ang_to_a0
+			rvdWTable["O"] = 1.342*unit_Ang_to_a0
+			rvdWTable["Ti"] = 1.562*unit_Ang_to_a0
+			
+			d = 20.0
+			s6_PBE = 0.75
+			
+			rij = 0.0
+			
+			for atom1 in this:
+				for atom2 in this:
+					if( atom1 != atom2 ):
+						if( ( atom1.label in c6Table ) and ( atom1.label in rvdWTable )
+						     and ( atom2.label in c6Table ) and ( atom2.label in rvdWTable ) ):
+							c6 = math.sqrt( c6Table[atom1.label]*c6Table[atom2.label] )
+							rvdW = rvdWTable[atom1.label]+rvdWTable[atom2.label]
+						else:
+							print "### Error ###: in Molecule.dispCorr()"
+							print "               Available atoms Ti,O,He,H"
+							return 0.0
+							
+						rij = math.sqrt( (atom1.x-atom2.x)**2 + (atom1.y-atom2.y)**2
+						    + (atom1.z-atom2.z)**2 )*unit_Ang_to_a0
+						    
+						dampF = 1.0/( 1.0+math.exp(-d*(rij/rvdW-1.0)) )
+						Edisp += -s6_PBE*dampF*c6/rij**6
+		else:
+			print "### Error ###: in Molecule.dispCorr()"
+			print "               Unknown scheme (", scheme, ")"
+			return 0.0
+			
+		return Edisp/2.0 # @todo Estoy haciendo doble conteo en los ciclos anidados, por eso el 2.0
 		
 	def __saturateWith( this, cluster, atomLabel="H" ):
 		
