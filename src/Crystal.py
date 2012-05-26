@@ -99,7 +99,7 @@ class Crystal(Molecule):
 	###
 	# Select the supercell dimentions
 	##
-	def buildSuperCell( this, nx=1, ny=1, nz=1 ):
+	def buildSuperCell( this, nx=1, ny=1, nz=0 ):
 		print "BUILDING SUPERCELL"
 		print "------------------"
 		print "   NEW SIZE: "+"[ "+str(nx)+", "+str(ny)+", "+str(nz)+" ]"
@@ -112,17 +112,28 @@ class Crystal(Molecule):
 		molecule = this[:]
 		c = this.latticeVectors
 		
+		#for ix in range(nx/2-nx+1, nx/2+1):
+			#for iy in range(ny/2-ny+1, ny/2+1):
+				#for iz in range(nz/2-nz+1, nz/2+1):
+					
+					#for atom in molecule:
+						#x = atom.x+ix*c[0,0]+iy*c[0,1]+iz*c[0,2]
+						#y = atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2]
+						#z = atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2]
+						
+						#this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True )
+						
+						
 		for ix in range(nx/2-nx+1, nx/2+1):
 			for iy in range(ny/2-ny+1, ny/2+1):
-				for iz in range(nz/2-nz+1, nz/2+1):
-					
+				if( ix != 0 or iy != 0 ):
 					for atom in molecule:
-						x = atom.x+ix*c[0,0]+iy*c[0,1]+iz*c[0,2]
-						y = atom.y+ix*c[1,0]+iy*c[1,1]+iz*c[1,2]
-						z = atom.z+ix*c[2,0]+iy*c[2,1]+iz*c[2,2]
+						x = atom.x+ix*c[0,0]
+						y = atom.y+iy*c[1,1]
+						z = atom.z
 						
-						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True )
-								
+						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=False )
+		
 	###
 	# Test method
 	##

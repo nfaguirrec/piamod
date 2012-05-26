@@ -125,17 +125,35 @@ class PIAMoD:
 		principal.readHistory()
 		atexit.register( principal.saveHistory )
 		
-		if( len( sys.argv ) > 1 ):
-			ifile=sys.argv[1]
-			if os.path.isfile( ifile ):
-				execfile( ifile )
+	###
+	# Principal function
+	##
+	@staticmethod
+	def runScript( scriptFileName ):
+		#parser = OptionParser()
 		
-		#Atom.test()
-		#SymmetryOperator.test()
-		#SymmetryOperatorsList.test()
-		#Molecule.test()
-		#Crystal.test()
-		#TextBlock.test()
-		#ParserTextBlock.test()
-		#CrystalParser.test()
-		#MolproParser.test()
+		#parser.add_option(
+			#"-i", "--ifile",
+			#action="store", type="string", dest="inputFileName",
+			#help="Crystal input filename", metavar="FILE"
+		#)
+		
+		#parser.add_option(
+			#"-o", "--ofile",
+			#action="store", type="string", dest="outputFile", default="screen",
+			#help="Write output data to FILE", metavar="FILE"
+		#)
+		
+		#(options, args) = parser.parse_args()
+		
+		sys.ps1="piamod> "
+		
+		principal = PIAMoD()
+		#principal.showWelcomeMessage()
+		#principal.loadCompleter()
+		#principal.readHistory()
+		#atexit.register( principal.saveHistory )
+		
+		if os.path.isfile( scriptFileName ):
+			execfile( scriptFileName )
+		

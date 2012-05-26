@@ -44,6 +44,7 @@ class Molecule(list):
 	XYZ=0
 	MOLDEN=1
 	POVRAY=2
+	LATTICE=3
 	
 	###
 	# Constructor
@@ -173,7 +174,7 @@ class Molecule(list):
 	def setCharges( this, charge, label=None, id=None, pos=None ):
 		if( label != None ):
 			for atom in this:
-				if( atom.label == label ):
+				if( atom.label.upper() == label.upper() ):
 					atom.charge = charge
 		elif( id != None ):
 			for atom in this:
@@ -184,9 +185,8 @@ class Molecule(list):
 				if( i == pos ):
 					this(i).charge = charge
 		else:
-			for i in range(1,len(this)+1):
-				if( i == pos ):
-					this(i).charge = charge
+			for atom in this:
+				atom.charge = charge
 	
 	###
 	# Removes atoms from the molecule
@@ -259,6 +259,32 @@ class Molecule(list):
 				
 		print "   The applying of the symmetry operators has been successful !!"
 		print ""
+		sys.stdout.flush()
+		
+	###
+	# Returns a list with the labels of the atoms
+	##
+	def getLabels( this ):
+		labels = []
+		
+		for atom in this:
+			if( not atom.label in labels ):
+				labels.append( atom.label )
+				
+		return labels
+		
+	###
+	# Returns a new molecule that includes only the atoms with the selected label
+	##
+	def filterByLabel( this, label ):
+		mol = Molecule()
+		mol.name = this.name+" filtered by "+label
+		
+		for atom in this:
+			if( atom.label.upper() == label.upper() ):
+				mol.append( atom )
+				
+		return mol
 		
 	###
 	# Return the Atom object using its id or position (pos), return
@@ -305,7 +331,6 @@ class Molecule(list):
 		Atom.xyzThresholdComparison = tol
 		
 		for n in range(0,len(this)):
-			
 			located = False
 			
 			for m in range(0,len(other)):
@@ -317,8 +342,25 @@ class Molecule(list):
 					break
 					
 			if( not located ):
-				outputMolecule.append( this[n], makeCopy=makeCopy, automaticId=(not keepIds) )
+				outputMolecule.append( this[n], makeCopy=makeCopy, automaticId=(not keepIds), check=False )
 				
+		#for n in range(0,len(this)):
+			##norm = numpy.linalg.norm( atom.xyzArray() - centerAtom.xyzArray() )
+			#norm = numpy.linalg.norm( this[n].xyzArray() )
+			#located = False
+			
+			#if( norm < 15.0 ):
+				#for m in range(0,len(other)):
+					#if( this[n] == other[m] ):
+						#print "   Equivalent atom located:"
+						#print "      ", this[n]
+						#print "      ", other[m]
+						#located = True
+						#break
+					
+			#if( not located ):
+				#outputMolecule.append( this[n], makeCopy=makeCopy, automaticId=(not keepIds), check=False )
+			
 		Atom.xyzThresholdComparison = initialTol
 
 		print ""
@@ -416,6 +458,7 @@ class Molecule(list):
 		for atom in neighborhood:
 			print atom.id,
 		print "]"
+		sys.stdout.flush()
 			
 		return neighborhood
 
@@ -482,6 +525,8 @@ class Molecule(list):
 			this.__saveInMoldenFormat( outputFileName )
 		elif( format==Molecule.POVRAY ):
 			this.__saveInPOVRayFormat( outputFileName )
+		elif( format==Molecule.LATTICE ):
+			this.__saveInLatticeFormat( outputFileName )
 		else:
 			print "##Error##: in Molecule.save()"
 			print "           Input file format for save geometry not Supported"
@@ -607,7 +652,6 @@ class Molecule(list):
 		centerAtom = this.getAtom( id=idCenter )
 			
 		for atom in this:
-			
 			dist = numpy.linalg.norm( atom.xyzArray() - centerAtom.xyzArray() )
 		
 			if( dist < cutoff ):
@@ -617,6 +661,64 @@ class Molecule(list):
 			return this.__saturateWith( outputMolecule, "H" )
 			
 		return outputMolecule
+		
+	###
+	#
+	##
+	def radialShells( this, idCenter=-1, center=[0.0,0.0,0.0], stepSize=1.0, maxRadius=100.0, makeCopy=False ):
+		print ""
+		print "BUILDING RADIAL SHELLS"
+		print "----------------------"
+		
+		if( idCenter != -1 ):
+			centerEff = this[i].xyzArray()
+		else:
+			centerEff = center
+		
+		distAtomIDPair = []
+		
+		print "stepSize = ", stepSize
+		print "center = ", centerEff
+		print ""
+		print "Building vector of distances ... ",
+		for i in range(len(this)):
+			dist = numpy.linalg.norm( this[i].xyzArray() - centerEff )
+			
+			if( dist <= maxRadius ):
+				distAtomIDPair.append( ( dist, i ) )
+		print "OK"
+		sys.stdout.flush()
+		
+		print "Building radial shells ... ",
+		hist={}
+		outputMoleculeMap = {}
+		
+		for i in range(len(distAtomIDPair)):
+			n = int( distAtomIDPair[i][0]/stepSize )
+			rn = "%10.2f"%(n*stepSize)
+			
+			if( n in hist ):
+				hist[n] += 1
+				outputMoleculeMap[rn].append( this[distAtomIDPair[i][1]], automaticId=False, makeCopy=makeCopy, check=False )
+			else:
+				hist[n] = 1
+				outputMoleculeMap[rn] = Molecule( "Radial shell"+rn )
+				outputMoleculeMap[rn].append( this[distAtomIDPair[i][1]], automaticId=False, makeCopy=makeCopy, check=False )
+				
+		print "OK"
+		sys.stdout.flush()
+		
+		print ""
+		print "Radial distribution"
+		print "%5s"%"r", "%8s"%"nAtoms", "%20s"%"ChemicalFormula"
+		for key,value in hist.items():
+			print "%5.2f"%(key*stepSize), "%8d"%value, "%20s"%outputMoleculeMap["%10.2f"%(key*stepSize)].chemicalFormula()
+		print ""
+		sys.stdout.flush()
+		
+		del hist
+		del distAtomIDPair[:]
+		return outputMoleculeMap
 		
 	###
 	#
@@ -857,6 +959,21 @@ class Molecule(list):
 		
 		if( outputFileName!=Molecule.STDOUT ):
 			ofile.close()
+			
+	def __saveInLatticeFormat( this, outputFileName ):
+		if( outputFileName!=Molecule.STDOUT ):
+			ofile = file(outputFileName, 'w')
+		else:
+			ofile = sys.stdout
+			
+		print >> ofile, ""
+		print >> ofile, len(this)
+		
+		for atom in this:
+			print >> ofile, "%10.5f"%atom.x, "%10.5f"%atom.y, "%10.5f"%atom.z, "%10.5f"%atom.charge, 0
+		
+		if( outputFileName!=Molecule.STDOUT ):
+			ofile.close()
 		
 	###
 	# Save the molecule geometry in molden format file
@@ -890,6 +1007,7 @@ class Molecule(list):
 			
 		print "   Loading processes sucesfull !!"
 		print ""
+		sys.stdout.flush()
 		
 	###
 	# Test method
@@ -965,16 +1083,22 @@ class Molecule(list):
 		mol1.intersection( mol2, keepIds=True, tol=1e-1 ).save( "intersection.xyz", format=Molecule.XYZ )
 		
 		cluster = mol1.radialCluster( 1, 4.0, saturate=True )
-		cluster = mol1.neighborhoodCluster( 1, 2, saturate=True )
-		#cluster.save( "cluster.xyz", format=Molecule.XYZ )
-		print "Cluster"
-		print cluster
+		cluster.save( "radialCluster.xyz", format=Molecule.XYZ )
 		
-		newcluster = Molecule()
-		newcluster.load( PIAMOD_HOME+"/src/data/formats/XYZ", format=Molecule.XYZ )
-		print newcluster
+		#cluster = mol1.neighborhoodCluster( 1, 2, saturate=True )
+		#cluster.save( "neighborhoodCluster.xyz", format=Molecule.XYZ )
+		#print "Cluster"
+		#print cluster
 		
-		newcluster.save( format=Molecule.POVRAY )
+		shells = mol1.radialShells( 1 )
+		for shell in shells:
+			shell.save( shell.name+".xyz", format=Molecule.XYZ )
+		
+		#newcluster = Molecule()
+		#newcluster.load( PIAMOD_HOME+"/src/data/formats/XYZ", format=Molecule.XYZ )
+		#print newcluster
+		
+		#newcluster.save( format=Molecule.POVRAY )
 		
 		
 		

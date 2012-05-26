@@ -201,6 +201,8 @@ class CrystalParser( ParserTextBlock ):
 	##
 	@staticmethod
 	def test():
+		PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+		
 		parser = CrystalParser() ;
 		crystal = Crystal() ;
 		
@@ -208,7 +210,7 @@ class CrystalParser( ParserTextBlock ):
 		print "Loading data from CRYSTAL_OUTPUT file"
 		print "====================================="
 		print ""
-		parser.inputFile = "src/data/formats/CRYSTAL_OUTPUT"
+		parser.inputFile = PIAMOD_HOME+"/src/data/formats/CRYSTAL_OUTPUT"
 		parser.format = CrystalParser.OUTPUT
 		
 		print ""
@@ -217,6 +219,7 @@ class CrystalParser( ParserTextBlock ):
 		print ""
 		parser.setFlags( atomsType=CrystalParser.ALL_ATOMS )
 		crystal = parser.load()
+		crystal.save("crystal.xyz")
 		print crystal
 		
 		print ""
@@ -233,7 +236,7 @@ class CrystalParser( ParserTextBlock ):
 		print "=================================="
 		print ""
 		
-		parser.inputFile = "src/data/formats/CRYSTAL_GUI"
+		parser.inputFile = PIAMOD_HOME+"/src/data/formats/CRYSTAL_GUI"
 		parser.format = CrystalParser.GUI
 		crystal = parser.load()
 		print crystal

@@ -1,0 +1,19 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
+import os
+
+PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+if( PIAMOD_HOME == None ):
+	print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
+	quit()
+
+sys.path.append(PIAMOD_HOME+"/src")
+
+from PIAMoD import *
+
+if( len( sys.argv ) > 1 ):
+	scriptFileName = sys.argv[1]
+	PIAMoD.runScript( scriptFileName )
+
