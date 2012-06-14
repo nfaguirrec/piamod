@@ -367,6 +367,26 @@ class Molecule(list):
 		return outputMolecule
 		
 	###
+	# Return 
+	##
+	def mapPoints( this, pointsList, labels=None, scale=1.0 ):
+		outputMap = {}
+		
+		for n in range( len(pointsList) ):
+			for atom in this:
+				norm = numpy.linalg.norm( numpy.array(pointsList[n]) - atom.xyzArray() )
+				
+				if( norm < scale*atom.covalentRadius() ):
+					if( labels == None ):
+						outputMap[n] = atom
+					else:
+						outputMap[ labels[n] ] = atom
+						
+					break
+			
+		return outputMap
+		
+	###
 	# Return the intersection between this molecule respect to other. Remember
 	# that two atoms are equal only if the differences in xyz coordinates
 	# is lower than tol. The atoms for the output molecule will be the same
@@ -782,7 +802,7 @@ class Molecule(list):
 		return outputMolecule
 		
 	#
-	# @brief Calcula la energía de dispersión con esquemas tipo Grimme
+	# @brief Calcula la energía de dispersión con esquemas tipo Grimme en unidades atómicas
 	#
 	def dispCorr( this, scheme="Grimme" ):
 		Edisp = 0.0
