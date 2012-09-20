@@ -167,6 +167,28 @@ class Molecule(list):
 				
 				if( automaticId ):
 					this[-1].id = len(this)
+
+
+	###
+	# Sets the label of a type of atom
+	##
+	def setLabels( this, newLabel, label=None, id=None, pos=None ):
+		if( label != None ):
+			for atom in this:
+				if( atom.label.upper() == label.upper() ):
+					atom.label = newLabel.upper()
+		elif( id != None ):
+			for atom in this:
+				if( atom.id == id ):
+					atom.label = newLabel.upper()
+		elif( pos != None ):
+			for i in range(len(this)):
+				if( i == pos ):
+					this(i).label = newLabel.upper()
+		else:
+			for atom in this:
+				atom.label = newLabel.upper()
+
 								
 	###
 	# Sets the charge of a type of atom
