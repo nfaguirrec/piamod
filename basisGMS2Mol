@@ -1,0 +1,69 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+############################################################################
+#    Copyright (C) 2010 by Nestor Aguirre                                  #
+#    nfaguirre@imaff.cfmac.csic.es                                         #
+#                                                                          #
+#    This program is free software; you can redistribute it and#or modify  #
+#    it under the terms of the GNU General Public License as published by  #
+#    the Free Software Foundation; either version 2 of the License, or     #
+#    (at your option) any later version.                                   #
+#                                                                          #
+#    This program is distributed in the hope that it will be useful,       #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#    GNU General Public License for more details.                          #
+#                                                                          #
+#    You should have received a copy of the GNU General Public License     #
+#    along with this program; if not, write to the                         #
+#    Free Software Foundation, Inc.,                                       #
+#    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+############################################################################
+
+import sys
+import os
+
+PIAMOD_HOME = os.getenv("PIAMOD_HOME")
+if( PIAMOD_HOME == None ):
+	print "### Error ###: Environment variable PIAMOD_HOME not found !!!"
+	quit()
+sys.path.append(PIAMOD_HOME+"/src")
+
+from ParserTextBlock import *
+from GaussianBasisSet import *
+
+class BasisGMS2Mol:
+	
+	@staticmethod
+	def usage():
+		print "Usage:"
+		print "   $ basisCry2Mol FILE"
+		print ""
+		print "   This program extracts the basis set from GAMESS input and"
+		print "   translates it to molpro format"
+		quit()
+		
+	@staticmethod
+	def main():
+		# Verifica las opciones obligatorias
+		if( sys.argv[-1][-12:] == "basisCry2Mol" ):
+			BasisGMS2Mol.usage()
+			return 0
+			
+		parser = ParserTextBlock( sys.argv[-1] )
+		block = parser.extractBlock( " \$.*", " \$end", ".*" )
+		nItems = parser.numberOfBlocks
+		
+		print "basis={"
+		for i in range(1,nItems):
+			block = parser.extractBlock( " \$.*", " \$end", ".*", i )
+		
+			gbs = GaussianBasisSet()
+			gbs.loadFromTextBlock( block, format=GaussianBasisSet.GAMESS )
+			
+			molproBlock = gbs.save( format=GaussianBasisSet.MOLPRO )
+			print molproBlock[len("basis={ "):][0:-1]
+		print "}"
+
+if __name__ == "__main__":
+	BasisGMS2Mol.main()

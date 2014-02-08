@@ -89,11 +89,8 @@ class PIAMoD:
 		print "       System based on Python for Interactive"
 		print "             Analysis of Molecular data"
 		print ""
-		print "         Author: Nestor Aguirre (2009-2011)"
-		print ""
-		print "      Departamento de Fisica Atomica Molecular"
-		print "                y de Agregados (CSIC)"
-		print "                    Madrid, Spain"
+		print "         Author: Nestor Aguirre (2009-2014)"
+		print "               nfaguirrec@gmail.com"
 		print "==================================================="
 		
 	###
@@ -120,7 +117,7 @@ class PIAMoD:
 		sys.ps1="piamod> "
 		
 		principal = PIAMoD()
-		#principal.showWelcomeMessage()
+		principal.showWelcomeMessage()
 		principal.loadCompleter()
 		principal.readHistory()
 		atexit.register( principal.saveHistory )
@@ -149,10 +146,10 @@ class PIAMoD:
 		sys.ps1="piamod> "
 		
 		principal = PIAMoD()
-		#principal.showWelcomeMessage()
-		#principal.loadCompleter()
-		#principal.readHistory()
-		#atexit.register( principal.saveHistory )
+		principal.showWelcomeMessage()
+		principal.loadCompleter()
+		principal.readHistory()
+		atexit.register( principal.saveHistory )
 		
 		if os.path.isfile( scriptFileName ):
 			execfile( scriptFileName )

@@ -19,6 +19,7 @@
 #    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ############################################################################
 
+import re
 from UserDict import UserDict
 
 from Atom import *
@@ -29,6 +30,7 @@ class GaussianBasisSet( UserDict ):
 	
 	CRYSTAL=0
 	MOLPRO=1
+	GAMESS=2
 	
 	def __init__( this ):
 		UserDict.__init__( this )
@@ -66,6 +68,8 @@ class GaussianBasisSet( UserDict ):
 	def loadFromTextBlock( this, textBlock, format=CRYSTAL ):
 		if( format == GaussianBasisSet.CRYSTAL ):
 			this.__loadFromCystalFormat( textBlock )
+		elif( format == GaussianBasisSet.GAMESS ):
+			this.__loadFromGAMESSFormat( textBlock )
 		elif( format == GaussianBasisSet.MOLPRO ):
 			this.__loadFromMoldenFormat( textBlock )
 		else:
@@ -134,6 +138,67 @@ class GaussianBasisSet( UserDict ):
 						
 				this[label] = currentBasis
 				
+		
+	def __loadFromGAMESSFormat( this, textBlock ):
+		
+		lines = textBlock.content.splitlines()
+		
+		label = textBlock.header.replace( "$", "" )
+		
+		nContracted = 0
+		nLine = 0
+		while( nLine < len(lines) ):
+			tokens = lines[nLine].split()
+			nLine += 1
+			
+			if ( re.match( "^[A-Za-z]$", tokens[0] ) ):
+				nContracted += 1
+				
+		nLine = 0
+		while( nLine < len(lines) ):
+			currentBasis = []
+			
+			sType = ""
+			nPrimitives = 0
+			
+			for i in range( 0, nContracted ):
+				tokens = lines[nLine].split()
+				
+				sType = tokens[0]
+				nPrimitives = int(tokens[1])
+				
+				nLine += 1
+				
+				if( sType == "S" ):
+					currentBasis.append( ContractedGaussian( sType="S" ) )
+				elif( sType == "L" ):
+					currentBasis.append( ContractedGaussian( sType="S" ) )
+					currentBasis.append( ContractedGaussian( sType="P" ) )
+				elif( sType == "P" ):
+					currentBasis.append( ContractedGaussian( sType="P" ) )
+				elif( sType == "D" ):
+					currentBasis.append( ContractedGaussian( sType="D" ) )
+				elif( sType == "F" ):
+					currentBasis.append( ContractedGaussian( sType="F" ) )
+					
+				for j in range( 0, nPrimitives ):
+					tokens = lines[nLine].split()
+					nLine += 1
+					
+					exponent = float(tokens[1].replace("D","E"))
+					coefficient = float(tokens[2].replace("D","E"))
+					
+					gauss = PrimitiveGaussian( exponent=exponent )
+					
+					if( sType != "L" ):
+						currentBasis[-1].append( coefficient, gauss )
+					else:
+						coefficient2 = float(tokens[3].replace("D","E"))
+						
+						currentBasis[-2].append( coefficient, gauss )
+						currentBasis[-1].append( coefficient2, gauss )
+						
+				this[label] = currentBasis
 		
 	def __loadFromMoldenFormat( this, textBlock ):
 		pass

@@ -391,20 +391,37 @@ class Molecule(list):
 	###
 	# Return 
 	##
-	def mapPoints( this, pointsList, labels=None, scale=1.0 ):
+	def mapPoints( this, pointsList, labels=None, maxScale=8.0 ):
 		outputMap = {}
 		
 		for n in range( len(pointsList) ):
-			for atom in this:
-				norm = numpy.linalg.norm( numpy.array(pointsList[n]) - atom.xyzArray() )
+			scale = 1.0
+			
+			while ( scale <= maxScale ):
+				options = {}
 				
-				if( norm < scale*atom.covalentRadius() ):
-					if( labels == None ):
-						outputMap[n] = atom
-					else:
-						outputMap[ labels[n] ] = atom
+				for atom in this:
+					norm = numpy.linalg.norm( numpy.array(pointsList[n]) - atom.xyzArray() )
+					
+					if( norm < scale*atom.covalentRadius() ):
+						options[norm] = atom
 						
+				if( len( options ) == 0 ):
+					scale += 1.0
+					continue
+				else:
+					skeys = options.keys()
+					skeys.sort()
+					
+					if( labels == None ):
+						outputMap[n] = options[ skeys[0] ]
+					else:
+						outputMap[ labels[n] ] = options[ skeys[0] ]
+					
 					break
+					
+			if( scale == maxScale ):
+				print "@@ WARNING @@ Element "+str(n)+" have not been assigned"
 			
 		return outputMap
 		
