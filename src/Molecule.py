@@ -1052,11 +1052,12 @@ class Molecule(list):
 	###
 	# Load the molecule geometry from XYZ format file
 	##
-	def __loadFromXYZFormat( this, inputFileName, check=False ):
-		print "LOADING MOLECULE FROM XYZ FILE"
-		print "------------------------------"
-		print "   INPUTFILENAME = ", inputFileName
-		print "   CHECK         = ", check
+	def __loadFromXYZFormat( this, inputFileName, check=False, debug=False ):
+		if( debug ):
+			print "LOADING MOLECULE FROM XYZ FILE"
+			print "------------------------------"
+			print "   INPUTFILENAME = ", inputFileName
+			print "   CHECK         = ", check
 		
 		del this[:]
 		
@@ -1082,9 +1083,10 @@ class Molecule(list):
 		if( inputFileName!=Molecule.STDIN ):
 			ifile.close()
 			
-		print "   Loading processes sucesfull !!"
-		print ""
-		sys.stdout.flush()
+		if( debug ):
+			print "   Loading processes sucesfull !!"
+			print ""
+			sys.stdout.flush()
 		
 	###
 	# Test method
