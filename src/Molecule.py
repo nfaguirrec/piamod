@@ -226,6 +226,21 @@ class Molecule(list):
 				
 			for atom in atomList:
 				list.remove( this, atom )
+				
+	###
+	# @brief Returns the geometric center of the molecule
+	##
+	def center( this, hideIdList=None ):
+		r = numpy.array( [ 0.0, 0.0, 0.0 ] )
+		
+		for atom in this:
+			if( hideIdList != None ):
+				if( not atom.id in hideIdList ):
+					r += [ atom.x, atom.y, atom.z ]
+			else:
+				r += [ atom.x, atom.y, atom.z ]
+		
+		return r/len(this)
 		
 	###
 	# @warning No tiene implementada la componente de translacion para el operador de simetria
@@ -1035,7 +1050,7 @@ class Molecule(list):
 			ofile.close()
 		
 	###
-	# Save the molecule geometry in molden format file
+	# Load the molecule geometry from XYZ format file
 	##
 	def __loadFromXYZFormat( this, inputFileName, check=False ):
 		print "LOADING MOLECULE FROM XYZ FILE"
@@ -1050,13 +1065,16 @@ class Molecule(list):
 		else:
 			ifile = sys.stdin
 			
+		nAtoms = 0
 		i=0
 		for line in ifile:
+			if( i==0 ):
+				nAtoms = int(line)
 			if( i==1 ):
 				this.name = line[0:len(line)-1]
 				if( len(this.name) == 0 ):
 					this.name = "from "+inputFileName
-			if( i>=2 ):
+			if( i>=2 and i-1<=nAtoms ):
 				tokens = line.split()
 				this.append( Atom( float(tokens[1]), float(tokens[2]), float(tokens[3]), label=tokens[0] ), check )
 			i+=1
