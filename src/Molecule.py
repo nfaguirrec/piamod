@@ -508,31 +508,38 @@ class Molecule(list):
 	###
 	# 
 	##
-	def getNeighborhood( this, atom=None, id=None, makeCopy=False, keepIds=False ):
-		print "   Getting neighborhood for atom id=", "%5d"%id, " ... ",
-		neighborhood = Molecule()
-		
+	def getNeighborhood( this, atom=None, id=None, pos=None, makeCopy=False, keepIds=False, debug=True ):
+		if( debug and atom != None ):
+			print "   Getting neighborhood for atom id=", "%5d"%(atom.id), " ... ",
+		if( debug and id != None ):
+			print "   Getting neighborhood for atom id=", "%5d"%id, " ... ",
+		if( debug and pos != None ):
+			print "   Getting neighborhood for atom pos=", "%5d"%pos, " ... ",
+			
 		if( atom != None ):
-			for atom1 in this:
-				if( atom.isConnectedWith( atom1 ) ):
-					if( makeCopy ):
-						neighborhood.append( copy( atom1 ), automaticId=(not keepIds) )
-					else:
-						neighborhood.append( atom1, automaticId=(not keepIds) )
-					
+			centerAtom = atom
 		elif( id != None ):
 			centerAtom = this.getAtom( id )
+		elif( pos != None ):
+			centerAtom = this[ pos ]
 			
-			for atom1 in this:
-				if( centerAtom.isConnectedWith( atom1 ) ):
-					neighborhood.append( atom1, makeCopy=makeCopy, automaticId=(not keepIds) )
+		neighborhood = Molecule()
+			
+		for atom1 in this:
+			if( centerAtom.isConnectedWith( atom1 ) ):
+				if( makeCopy ):
+					neighborhood.append( copy( atom1 ), automaticId=(not keepIds) )
+				else:
+					neighborhood.append( atom1, automaticId=(not keepIds) )
 				
-		print "OK --> [", 
-		
-		for atom in neighborhood:
-			print atom.id,
-		print "]"
-		sys.stdout.flush()
+		if( debug ):
+			print "OK --> [", 
+			
+			for atom1 in neighborhood:
+				print atom.id,
+				
+			print "]"
+			sys.stdout.flush()
 			
 		return neighborhood
 
