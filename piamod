@@ -13,4 +13,3 @@ sys.path.append(PIAMOD_HOME+"/src")
 
 from PIAMoD import *
 PIAMoD.run()
-
