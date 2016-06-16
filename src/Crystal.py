@@ -99,7 +99,7 @@ class Crystal(Molecule):
 	###
 	# Select the supercell dimentions
 	##
-	def buildSuperCell( this, nx=1, ny=1, nz=0 ):
+	def buildSuperCell( this, nx=1, ny=1, nz=0, fixUnitCell=False, debug=False ):
 		#print "BUILDING SUPERCELL"
 		#print "------------------"
 		#print "   NEW SIZE: "+"[ "+str(nx)+", "+str(ny)+", "+str(nz)+" ]"
@@ -112,6 +112,8 @@ class Crystal(Molecule):
 		molecule = this[:]
 		c = this.latticeVectors
 		
+		toRemove = {}
+		
 		#for ix in range(nx/2-nx+1, nx/2+1):
 			#for iy in range(ny/2-ny+1, ny/2+1):
 				#for iz in range(nz/2-nz+1, nz/2+1):
@@ -123,14 +125,31 @@ class Crystal(Molecule):
 		for ix in range(nx/2-nx+1, nx/2+1):
 			for iy in range(ny/2-ny+1, ny/2+1):
 				
+				if( fixUnitCell ):
+					if( ix == 0 and iy == 0 ):
+						continue
+				
 				for atom in molecule:
 					x = atom.x+float(ix-1)*c[0,0]+float(iy-1)*c[0,1]+float(iz-1)*c[0,2]
 					y = atom.y+float(ix-1)*c[1,0]+float(iy-1)*c[1,1]+float(iz-1)*c[1,2]
 					z = atom.z+float(ix-1)*c[2,0]+float(iy-1)*c[2,1]+float(iz-1)*c[2,2]
 					
-					this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True )
+					if( fixUnitCell ):
+						success = this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True, onlyTest=True, debug=debug )
 						
+						if( not success ):
+							toRemove[ atom.id ] = 1
+					else:
+						this.append( Atom( x, y, z, charge=atom.charge, label=atom.label, real=False, symGrp=atom.symGrp ), check=True, debug=debug )
 						
+		
+		if( fixUnitCell ):
+			if( debug ):
+				print "List of atoms to remove:"
+				print toRemove.keys()
+				
+			this.remove( idList=toRemove.keys() )
+		
 		#for ix in range(nx/2-nx+1, nx/2+1):
 			#for iy in range(ny/2-ny+1, ny/2+1):
 				#if( ix != 0 or iy != 0 ):

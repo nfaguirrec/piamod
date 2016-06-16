@@ -133,7 +133,7 @@ class Molecule(list):
 	###
 	# Adds Atoms to the molecule
 	##
-	def append( this, item, makeCopy=True, automaticId=True, check=True ):
+	def append( this, item, makeCopy=True, automaticId=True, check=True, debug=False, onlyTest=False ):
 		if( not check ):
 			if( makeCopy ):
 				list.append( this, copy( item ) )
@@ -142,31 +142,43 @@ class Molecule(list):
 			
 			if( automaticId ):
 				this[-1].id = len(this)
+				
+			return True
+			
 		else:
 			exist = False
 			for atom in this:
-				if( atom == item ):
-					#print "This atoms are equal:"
-					#print "  -> ", atom
-					#print "  -> ", item
-					exist = True
-					break
+				#if( atom == item ):
+					#if( debug ):
+						#print "This atoms are equal:"
+						#print "  -> ", atom
+						#print "  ->      ", item
+						
+					#exist = True
+					#break
 					
 				if( atom.isInTheSamePositionWith(item) ):
-					#print "This atoms are in the same position:"
-					#print "  -> ", atom
-					#print "  -> ", item
+					if( debug ):
+						print "This atoms are in the same position:"
+						print "  -> ", atom
+						print "  ->      ", item
+						
 					exist = True
 					break
 			
 			if( not exist ):
-				if( makeCopy ):
-					list.append( this, copy( item ) )
-				else:
-					list.append( this, item )
-				
-				if( automaticId ):
-					this[-1].id = len(this)
+				if( not onlyTest ):
+					if( makeCopy ):
+						list.append( this, copy( item ) )
+					else:
+						list.append( this, item )
+					
+					if( automaticId ):
+						this[-1].id = len(this)
+					
+				return True
+			else:
+				return False
 
 
 	###
@@ -213,7 +225,7 @@ class Molecule(list):
 	###
 	# Removes atoms from the molecule
 	##
-	def remove( this, idList=None, posList=None ):
+	def remove( this, idList=None, posList=None, atomList=None ):
 		if( idList ):
 			for id2 in idList:
 				atom = this.getAtom( id=id2, makeCopy=False )
@@ -224,6 +236,10 @@ class Molecule(list):
 			for pos in posList:
 				atomList.append( this.getAtom( pos=pos, makeCopy=False ) )
 				
+			for atom in atomList:
+				list.remove( this, atom )
+				
+		elif( atomList ):
 			for atom in atomList:
 				list.remove( this, atom )
 				
