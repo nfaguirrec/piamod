@@ -183,3 +183,6 @@ crystal.setLatticeVectors( latticeVectors )
 crystal.buildSuperCell( 2, 2, 2 )
 crystal.save( "final.xyz", format=Molecule.XYZ )
 ```
+
+# Authors
+* Nestor F. Aguirre ( nfaguirrec@gmail.com )
