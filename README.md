@@ -8,7 +8,7 @@ System based on Python for Interactive Analysis of Molecular data PIAMoD
 
 To cite the code, please proceed as follows:
 
-[![DOI](https://zenodo.org/badge/75976231.svg)]()
+[![DOI](https://zenodo.org/badge/37711694.svg)](https://zenodo.org/badge/latestdoi/37711694)
 
 # Loading data from VASP POSCAR file
 ```
