@@ -1,8 +1,14 @@
-# piamod
+# PIAMoD
 System based on Python for Interactive Analysis of Molecular data PIAMoD
 
 ## Authors
 * Nestor F. Aguirre ( nfaguirrec@gmail.com )
+
+## Citing
+
+To cite the code, please proceed as follows:
+
+[![DOI](https://zenodo.org/badge/75976231.svg)]()
 
 # Loading data from VASP POSCAR file
 ```
