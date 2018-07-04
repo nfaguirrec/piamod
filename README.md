@@ -1,6 +1,9 @@
 # piamod
 System based on Python for Interactive Analysis of Molecular data PIAMoD
 
+## Authors
+* Nestor F. Aguirre ( nfaguirrec@gmail.com )
+
 # Loading data from VASP POSCAR file
 ```
 parser = VASP_Parser()
@@ -183,6 +186,3 @@ crystal.setLatticeVectors( latticeVectors )
 crystal.buildSuperCell( 2, 2, 2 )
 crystal.save( "final.xyz", format=Molecule.XYZ )
 ```
-
-# Authors
-* Nestor F. Aguirre ( nfaguirrec@gmail.com )
