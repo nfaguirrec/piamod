@@ -1,5 +1,5 @@
 # PIAMoD
-System based on Python for Interactive Analysis of Molecular data PIAMoD
+System based on Python for Interactive Analysis of Molecular data PIAMoD. The PIAMoD program provides an python-based interactive interface that allows to manipulate molecular data from different standard electronic program packages such as molpro, GAMESS, VASP and CRYSTAL.
 
 ## Authors
 * Nestor F. Aguirre ( nfaguirrec@gmail.com )
